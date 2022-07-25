@@ -18,6 +18,7 @@ class UzForm extends Model
     public $supply_time;
     public $supply_ex_time;
     public $description;
+    public $address_id;
 
 
     /**
@@ -30,6 +31,7 @@ class UzForm extends Model
             [['type_id', 'customer_id', 'net_id', 'support_a', 'number_for_add',
             'supply_ex_time'], 'required'],
             [['description'], 'string', 'max' => 250],
+            ['address_id', 'number'],
             [['supply_time'], 'date'],
 
 //            // verifyCode needs to be entered correctly

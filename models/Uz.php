@@ -41,4 +41,8 @@ class Uz extends ActiveRecord
     {
         return $this->hasOne(MailBase::class, ['uz_id' => 'id']);
     }
+    public function getAddress()
+    {
+        return $this->hasOne(Address::class, ['id' => 'address_id']);
+    }
 }

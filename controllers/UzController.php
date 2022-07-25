@@ -85,6 +85,17 @@ class UzController extends BaseController
         $model = new UzForm();
 
         $uz = Uz::findOne($id);
+        $query = $uz->customer->address;
+        $address[0]=' ';
+        $selected_address = 0;
+        for ($i=0; $i < count($query); $i++)
+        {
+            array_push($address, $query[$i]->branch . ' - ' . $query[$i]->city . ' ' . $query[$i]->street . ' ' . $query[$i]->num);
+            if ($uz->address_id == $query[$i]->id){
+                $selected_address = $i + 1 ;
+            }
+        }
+
         if ($model->load(Yii::$app->request->post())) 
         {
 
@@ -101,6 +112,9 @@ class UzController extends BaseController
                 $uz->supply_ex_time = date('Y-m-d', strtotime(''.strval($model->supply_time).'+1 year'));
             }
             $uz->description = $model->description;
+            if ($model->address_id != 0){
+                $uz->address_id = $query[$model->address_id - 1]->id;
+            }
             $uz->save();
 
 
@@ -119,11 +133,14 @@ class UzController extends BaseController
         {
             array_push($net, $query[$i]->num . ' - ' .  $query[$i]->name);
         }
+       
         return $this->render('edit', [
             'model' => $model,
             'type' => $type,
             'net' => $net,
-            'uz' => $uz
+            'uz' => $uz,
+            'address' => $address,
+            'selected_address' => $selected_address
         ]);
     }
     public function actionDelete($id)

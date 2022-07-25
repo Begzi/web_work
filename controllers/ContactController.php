@@ -4,7 +4,6 @@
 namespace app\controllers;
 
 
-use app\models\Cert;
 use app\models\ContactForm;
 use app\models\Contact;
 use app\models\LogTicket;
@@ -81,11 +80,12 @@ class ContactController extends BaseController
             $contact->m_tel = $model->m_tel;
             $contact->mail = $model->mail;
             $contact->description = $model->description;
+            $contact->department = $model->department + 1;
             $contact->save();
 
 
 
-            return $this->redirect(array('customers/view', 'id'=>$contact->customer->id));
+            return $this->redirect(array('customers/view', 'id'=>$contact->customer_id));
         }
         return $this->render('edit', [
             'model' => $model,

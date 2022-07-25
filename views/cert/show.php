@@ -68,7 +68,6 @@ function find_uzs($certuzs, $fullname)
         if (document.getElementById('search_option').value == 'По дате'){
             document.getElementById('search_text').value += '***' + document.getElementById('date_from').value + '***' + document.getElementById('date_end').value ;
         }
-        alert(document.getElementById('search_text').value)
     }
     function log_choose_date(e) {
         
@@ -104,8 +103,8 @@ function find_uzs($certuzs, $fullname)
                         <?php endif;?>
                     </form>
                 </section>
-                <input class="date" id="date_from" type="date" value="2022-06-01" hidden>
-                <input class="date" id="date_end" type="date" value="2022-06-01" hidden>
+                <input class="date" id="date_from" type="date" value="<?php echo  date('Y-m-d h:i', time()); ?>" hidden>
+                <input class="date" id="date_end" type="date" value="<?php echo  date('Y-m-d h:i', time()); ?>" hidden>
                 <?php endif;?>
             </div>
 
@@ -186,18 +185,18 @@ function find_uzs($certuzs, $fullname)
                                             </tr>
                                         </thead>
                                         <tbody> 
-                                            <?php for ($j = 0; $j < count($cert); $j++):?>
+                                        <?php for ($j = 0; $j < count($cert); $j++):?>
                                             <tr>
                                                 <td>
                                                     <?php echo $cert[$j]->id;?>
                                                 </td>
                                                 <td>
 
-                      <a href="<?= \yii\helpers\Url::to(['/customers/view','id' => $cert[$j]->customer->id])?>">
-                          <span >
-                              <?php echo $cert[$j]->customer->shortname;?>
-                          </span>
-                      </a>
+                                                  <a href="<?= \yii\helpers\Url::to(['/customers/view','id' => $cert[$j]->customer->id])?>">
+                                                      <span >
+                                                          <?php echo $cert[$j]->customer->shortname;?>
+                                                      </span>
+                                                  </a>
                                                 </td>
                                                 <td>
                                                     <?php echo  $cert[$j]->num;?>
@@ -206,18 +205,15 @@ function find_uzs($certuzs, $fullname)
                                                     <?php echo $cert[$j]->ex_date;?>
                                                 </td>
                                                     
-    <?php if ((Yii::$app->user->can('admin', Yii::$app->user->id)) or (Yii::$app->user->can('office', Yii::$app->user->id))):?>
+                                            <?php if ((Yii::$app->user->can('admin', Yii::$app->user->id)) or (Yii::$app->user->can('office', Yii::$app->user->id))):?>
                                                 <td>
                                                     <span class="pull-right"> 
                                                         <?= Html::a('<span class="glyphicon glyphicon-edit"></span>', ['/cert/edit', 'id' => $cert[$j]->id], ['class'=>'btn btn-default btn-xs','title' => "Редактировать"]); ?>     
                                                     </span>
-                                                </td>
-                                           
-
-
-    <?php endif?>
+                                                </td>     
+                                             <?php endif?>
                                                 <td>
-                    <?php if (Yii::$app->session->hasFlash('groupOneEnding')):// Если сертификат кончается ?>
+                                            <?php if (Yii::$app->session->hasFlash('groupOneEnding')):// Если сертификат кончается ?>
  <?php   Modal::begin([
         'header' => '<h3>Отправка письма</h3>',
         'toggleButton' => [
@@ -254,13 +250,14 @@ function find_uzs($certuzs, $fullname)
                 <?php ActiveForm::end(); ?>
 <?php Modal::end(); ?>
 
-                     <?php endif;?>
+                                            <?php endif;?>
+
                                                     <span class="pull-right">
                                                     <?= Html::a('<span class="glyphicon glyphicon-picture"></span>', ['scans/' . $cert[$j]->customer_id . '/' . $cert[$j]->sc_link, 'dir' => $dir.$file], ['class'=>'btn btn-default btn-xs','title' => "Показать"]); ?>
                                                     </span>
                                                 </td>
                                             </tr>
-                                            <?php endfor; ?>
+                                        <?php endfor; ?>
                                         </tbody>
                                     </table>
                                 </div>

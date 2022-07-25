@@ -90,6 +90,9 @@ $this->title = 'Изменение узла';
                 ])->label('Примечание');?>
 
 
+                <?= $form->field($model, 'address_id')
+                    ->dropDownList($address,  ['options'=>[$selected_address =>['Selected'=>true]]])->label('Филиал');
+                ?>
 
 
                 <div class="form-group">
@@ -124,6 +127,10 @@ $this->title = 'Изменение узла';
     </div>
 </div>
 
+<?php foreach ($address as $add): ?>
+
+    <?php echo $add ?>
+<?php endforeach;?>
 
 
 <!--            <div class="form-group">-->

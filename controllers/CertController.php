@@ -40,13 +40,10 @@ class CertController extends BaseController
 
     public function actionAdd($customer_id)
     {
-//        if (Yii::$app->user->identity->username != 'admin') {
-//            return $this->actionError();
-//        }
 
         $model = new CertForm();
 
-        $customer = Customers::findOne($customer_id);
+        $customer = Customers::find()->with('uzs')->where(['id' => $customer_id])->one();
 
         if ($customer->uzs == NULL ){
             Yii::$app->session->setFlash('HaveNotUzs');
@@ -160,7 +157,7 @@ class CertController extends BaseController
 
     public function actionShow() 
     {
-        $query = Cert::find()
+        $query = Cert::find()->with('customer')->with('certuzs')
             ->orderBy('ex_date DESC');
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 15]);
         $cert = $query->offset($pages->offset)->limit($pages->limit)->all();
@@ -188,14 +185,14 @@ class CertController extends BaseController
 
             $querycustomer = Customers::find()->where(['like', 'replace(shortname, " ", "")', $search1])->one();
 
-            $query = Cert::find()->orFilterwhere(['like', 'replace(num, " ", "")', $search])
+            $query = Cert::find()->with('customer')->orFilterwhere(['like', 'replace(num, " ", "")', $search])
             ->orFilterWhere(['id'=> $search1])
             ->orFilterWhere(['customer_id'=> $querycustomer->id])
             ->orderBy('ex_date DESC');
         }
         elseif ($search_check == "Заказчик"){
             // return 1;
-             $query = Cert::find()->joinWith(['customer'] )
+             $query = Cert::find()->with('customer')->joinWith(['customer'] )
              ->andFilterWhere(['like', 'replace(shortname, " ", "")', $search1])
              ->orderBy('ex_date DESC');
 
@@ -217,6 +214,7 @@ class CertController extends BaseController
             $query = Cert::find()
                 ->andWhere(['<', 'ex_date', $search_date_end])
                 ->andWhere(['>', 'ex_date', $search_date_from])
+                ->with('customer')
                 ->joinWith(['customer'] )
                 ->andFilterWhere(['like', 'replace(shortname, " ", "")', $search1])
                 ->orderBy('ex_date DESC');
@@ -244,7 +242,7 @@ class CertController extends BaseController
         $temp_ex_date = date('Y-m-d', strtotime(' + 30 days'));
         $current_date = date('Y-m-d', time());
 
-        $query = Cert::find()->andWhere(['>', 'ex_date', $current_date])
+        $query = Cert::find()->with('customer')->andWhere(['>', 'ex_date', $current_date])
                             ->andWhere(['<', 'ex_date', $temp_ex_date]);
 
         
@@ -377,14 +375,14 @@ class CertController extends BaseController
     }
     public function actionCertgroupdelete($group_id)
     {
-        $query_group_name = CertGroupName::findOne($group_id);
-        for ($i = 0; $i < count($query_group_name->cert); $i++)
+        $group_name = CertGroupName::find()->with('cert')->where(['id' => $group_id])->one();
+        for ($i = 0; $i < count($group_name->cert); $i++)
         {
-            $query = Cert::findOne($query_group_name->cert[$i]->id);
+            $query = Cert::findOne($group_name->cert[$i]->id);
             $query->cert_group_name_id = NULL;
             $query->save();    
         }
-        $query_group_name->delete(); 
+        $group_name->delete(); 
         return $this->redirect(array('cert/groupshow'));
 
     }
@@ -429,7 +427,7 @@ class CertController extends BaseController
     public function actionDelete($id)
     {
         $customer_id = $cert->customer_id;
-        $cert = Cert::findOne($id);
+        $cert = Cert::find()->with('certuzs')->with('certgroupname')->where(['id' => $id])->one();
 
         unlink(Yii::$app->basePath . '/web/scans/' . $cert->customer_id . '/' . $cert->sc_link);    
 
@@ -463,6 +461,7 @@ class CertController extends BaseController
                 $cert_group_name->delete(); 
             }
         }
+        $customer_id = $cert->customer_id;
         $cert->delete();
 
         return $this->redirect(array('customers/view', 'id'=>$customer_id));

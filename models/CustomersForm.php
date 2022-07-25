@@ -12,7 +12,7 @@ class CustomersForm extends Model
 {
     public $fullname;
     public $shortname;
-    public $address;
+    public $leg_address;
     public $UHH;
     public $description;
     public $com_id;
@@ -27,8 +27,8 @@ class CustomersForm extends Model
     {
         return [
             // name, email, subject and body are required. 
-            [[ 'UHH',  'CPP', 'doc_type_id', 'fullname', 'shortname', 'address'], 'required'],
-            [['fullname', 'shortname', 'address'], 'string', 'max' => 250],
+            [[ 'UHH',  'CPP', 'doc_type_id', 'fullname', 'shortname', 'leg_address'], 'required'],
+            [['fullname', 'shortname', 'leg_address'], 'string', 'max' => 250],
             ['description', 'string', 'max' => 500],
             [['UHH'], 'integer', 'max' => 9999999999, 'message' => 'Введите не больше 10 чисел'],
             [['CPP'], 'integer', 'max' => 999999999],

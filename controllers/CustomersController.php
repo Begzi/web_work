@@ -7,6 +7,7 @@ namespace app\controllers;
 // use app\models\User;
 use app\models\Uz;
 use app\models\Cert;
+use app\models\Region;
 use app\models\Customers;
 use app\models\CustomersForm;
 use phpDocumentor\Reflection\Types\Array_;
@@ -130,7 +131,8 @@ class CustomersController extends BaseController{
             };
         }
 
-        $customer = Customers::findOne($id);
+        $query = Customers::find()->with('contacts')->with('uzs')->with('doctype')->with('address')->where(['id'=>$id])->all();
+        $customer = $query[0];
         $model = new CustomersForm();
     // Изменение описания и тип обмена документооборота
         if ($model->load(Yii::$app->request->post())) {
@@ -143,7 +145,8 @@ class CustomersController extends BaseController{
             }
         }
 
-        $customer = Customers::findOne($id);
+        $query = Customers::find()->with('contacts')->with('uzs')->with('doctype')->with('address')->where(['id'=>$id])->all();
+        $customer = $query[0];
 
         $text = preg_replace( "#\r?\n#", "<br />", $customer->description );
         $customer->description = $text;
@@ -293,7 +296,7 @@ class CustomersController extends BaseController{
             $customer = new Customers();
             $customer->fullname = $model->fullname;
             $customer->shortname = $model->shortname;
-            $customer->address = $model->address;
+            $customer->leg_address = $model->leg_address;
             $customer->description = $model->description;
             $customer->UHH = $model->UHH;
             $customer->CPP = $model->CPP;
@@ -351,7 +354,7 @@ class CustomersController extends BaseController{
 //            $customers = Customers::find()->all();
             $customer->fullname = $model->fullname;
             $customer->shortname = $model->shortname;
-            $customer->address = $model->address;
+            $customer->leg_address = $model->leg_address;
             $customer->description = $model->description;
             $customer->UHH = $model->UHH;
             $customer->CPP = $model->CPP;

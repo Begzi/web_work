@@ -14,10 +14,10 @@ use yii\bootstrap\ActiveForm;
 ?>
 <script>
     function customer_description_edit_open(){
+        $(".customers_doc_show_mode").show();
+        $(".customers_doc_edit_mode").hide();
         $(".customers_description_show_mode").hide();
         $(".customers_description_edit_mode").show();
-        $(".customers_doc_edit_mode").hide();
-        $(".customers_doc_show_mode").show();
     }
 
     function customer_description_edit_cancel() {
@@ -27,14 +27,16 @@ use yii\bootstrap\ActiveForm;
     function customer_doc_edit_open(){
         $(".customers_doc_show_mode").hide();
         $(".customers_doc_edit_mode").show();
-        $(".customers_description_edit_mode").hide();
         $(".customers_description_show_mode").show();
+        $(".customers_description_edit_mode").hide();
     }
 
     function customer_doc_edit_cancel() {
         $(".customers_doc_edit_mode").hide();
         $(".customers_doc_show_mode").show();
     }
+
+
 
 </script>
 <div class="container-fluid">
@@ -154,7 +156,7 @@ use yii\bootstrap\ActiveForm;
                     <div class="panel-body">
                         <div class="normal_mode_labels">
 
-                                <h4><span>Юридический адресс: <?php echo $customer->address ?></span></h4>
+                                <h4><span>Юридический адресс: <?php echo $customer->leg_address ?></span></h4>
                                 <h4><span>ИНН: <?php echo $customer->UHH ?></span></h4>
                                 <h4><span>КПП: <?php echo $customer->CPP ?></span></h4>
                         </div>
@@ -173,7 +175,7 @@ use yii\bootstrap\ActiveForm;
                                 <div class="panel-heading">
                                     Тип обмена документами
                                         <div class="customers_doc_show_mode pull-right" >
-                                            <button type="button" class="btn btn-xs" OnClick="customer_doc_edit_open();" title = "Редактировать" id="customer_description_edit_open_button"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
+                                            <button type="button" class="btn btn-xs" OnClick="customer_doc_edit_open();" title = "Редактировать" id="customer_doc_edit_open_button"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
 
                                         </div>
                                         <div class="form-group customers_doc_edit_mode pull-right" hidden>
@@ -200,6 +202,71 @@ use yii\bootstrap\ActiveForm;
                 </div>
     </div>
 <?php ActiveForm::end(); ?>
+
+
+    <div class="row" id="address_panel">
+        <div class="col-xs-12">
+            <div class="panel panel-info mw-100" style="width: 100%;">
+                <div class="panel-heading">Филиалы
+                 <?= Html::a('<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>', ['/address/add', 'customer_id' => $customer->id], ['class'=>'btn btn-xs pull-right', 'title' => "Добавить"]) ?>                     
+                 </div>
+                <div class="panel-body">
+                    <div class="normal_mode_labels">
+                        <?php if ( $customer->address != NULL):?>
+                            <div class="table-responsive">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr>                               
+                                                <th>Регион</th>
+                                                <th>Область</th>
+                                                <th>Населённый пункт</th>   
+                                                <th>Улица</th>
+                                                <th>Номер</th>
+                                                <th>Номер филиала</th>
+                                                <th><span class="pull-right">Редактирование</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody> 
+                                        <?php for ($i=0; $i < count($customer->address); $i++):?>       
+                                
+                                            <tr>
+                                                <td>
+                                                    <?php echo $customer->address[$i]->region->name?>
+                                                </td>
+                                                <td>
+                                                   <?php echo $customer->address[$i]->district ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $customer->address[$i]->city?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $customer->address[$i]->street?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $customer->address[$i]->num?>
+                                                </td>
+                                                <td>                                                    
+                                                    <?php echo $customer->address[$i]->branch?>
+                                                </td>
+                                                <td>
+                                                    <div class="contact_edit_buttons pull-right">
+                                                        <?= Html::a('<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>', ['/address/edit', 'id' => $customer->address[$i]->id], ['class'=>'btn btn-xs', 'title' => "Редактировать"]) ?>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <?php endfor; ?>
+                                        </tbody>
+                                    </table>
+                            </div>          
+
+
+                        <?php endif;?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="col-xs-12">
 
@@ -248,6 +315,7 @@ use yii\bootstrap\ActiveForm;
                                                 <th>Наименование</th>
                                                 <th>№ сети</th>
                                                 <th>Примечание</th>
+                                                <th>Филиал</th>
                                                 <th>Дата ввода в эксплуатацию</th>
                                                 <th>Техподдержка</th>
                                             </tr>
@@ -276,16 +344,25 @@ use yii\bootstrap\ActiveForm;
                                                         white-space: nowrap;">
                                                     <?php echo $realuzs[$k][$i]->uznet->num . ' ' . $realuzs[$k][$i]->uznet->name?>
                                                 </td>
-                                                <td style="width: 21%;
+                                                <td style="width: 11%;
                                                         overflow: hidden;
                                                         text-overflow: ellipsis;
                                                         white-space: nowrap;">
-                                                    <?php if (strlen(strval($realuzs[$k][$i]->description)) < 30){
+                                                    <?php if (strlen(strval($realuzs[$k][$i]->description)) < 10){
                                                         echo $realuzs[$k][$i]->description;
                                                     }
                                                     else{
-                                                        echo 'Примечание больше 30 символов';
+                                                        echo 'Примечание больше 10 символов';
                                                     }?>
+                                                </td>
+                                                <td style="width: 10%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
+                                                    <?php if ($realuzs[$k][$i]->address != NULL){
+                                                        echo $realuzs[$k][$i]->address->branch;
+                                                    }
+                                                    ?>
                                                 </td>
                                     <?php if ($realuzs[$k][$i]->supply_time == NULL or $realuzs[$k][$i]->supply_time == '1970-01-01'):?>
                                                     <td style="width: 15%;
