@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\UzTypeCategoria;
 use app\models\UzType;
 use app\models\UzNet;
 use app\models\Cert;
@@ -137,7 +138,11 @@ class SiteController extends BaseController
 
         }
 
-        $type = ['ПО', 'Аппаратное'];
+        $uztypecategoria = UzTypeCategoria::find()->all();
+        $type = [];
+        foreach ($uztypecategoria as $uztype){
+            array_push($type, $uztype->name);
+        }
 
     
         return $this->render('account',[

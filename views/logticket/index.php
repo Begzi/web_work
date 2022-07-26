@@ -22,29 +22,40 @@ $this->title = 'Тикет';
     	
     	if (document.getElementById('search_option').value == 'По дате'){
         	$(".date").show();
+        	$(".search_text").hide();
+        	$(".search_button").show();
     	}
     	else{
         	$(".date").hide();
+        	$(".search_text").show();
+        	$(".search_button").hide();
 
     	}
     }
-
+    function search_button(){
+    	var form = document.getElementById('search_form');
+    	console.log(document.getElementById('search_form'));
+    	search_option();
+    	form.submit();
+    }
 </script>
 <section class="ticket-area">
     <div class="container">
             <div class="col-md-12 col-md-4">
-                <section class="box search">
-                    <form method="get" onsubmit="search_option()" action="<?= Url::to(['logticket/searchfull']) ?>">
-                        <input id="search_text" type="text" class="text" name="search" placeholder="Поиск" />
+                <section class="box search" >
+                    <form method="get" onsubmit="search_option()" id="search_form" action="<?= Url::to(['logticket/searchfull']) ?>">
+                        <input id="search_text" type="text" class="search_text" name="search" placeholder="Поиск" />
+                        
                         <?php  if ($searchfull != NULL):?>
                             <label type="text" class="text"><?php echo $searchfull;?></label>
                             <?= Html::a('<span class="glyphicon glyphicon-remove" style="color:black"></span>', ['logticket/index','search'=> ''], ['class'=>'btn btn-xs', 'name' => 'customers-search-button', 'title' => 'Cancel']) ?>
 
                         <?php endif;?>
                     </form>
+                    <button id="search_button"  onclick="search_button()" class="search_button" name="search" value="Поиск"  hidden>Поиск</button>
                 </section>
-                <input class="date" id="date_from" type="date" value="2022-06-01" hidden>
-                <input class="date" id="date_end" type="date" value="2022-06-01" hidden>
+                <input class="date" id="date_from" type="date" value="<?php echo  date('Y-m-d h:i', time()); ?>" hidden>
+                <input class="date" id="date_end" type="date" value="<?php echo  date('Y-m-d h:i', time()); ?>" hidden>
             </div>
 
         <div class="col-xs-12 col-md-4">

@@ -48,7 +48,7 @@ $this->title = 'Новый заказчик';
 
                 <?= $form->field($model, 'shortname')->textInput(['autofocus' => true])->label('Короткое имя учреждения<font color="f33810">*</font>') ?>
 
-                <?= $form->field($model, 'address')->textInput(['autofocus' => true])->label('Адрес<font color="f33810">*</font>')  ?>
+                <?= $form->field($model, 'leg_address')->textInput(['autofocus' => true])->label('Адрес<font color="f33810">*</font>')  ?>
 
                 <?= $form->field($model, 'UHH')->textInput(['autofocus' => true])->label('ИНН(10)<font color="f33810">*</font>') ?>
 

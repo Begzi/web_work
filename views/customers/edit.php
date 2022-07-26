@@ -67,7 +67,7 @@ $this->title = 'Изменение заказчиков';
             </div>
         </div>
 
-        <?= Html::a('Объеденить заказчиков', ['/customers/association', 'customer_id' => $customer['id']], ['class'=>'btn btn-primary']) ?>
+        <?= Html::a('Объеденить заказчиков', ['/customers/association', 'id' => $customer['id']], ['class'=>'btn btn-primary']) ?>
 
     </div>
 </div>

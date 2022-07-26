@@ -123,7 +123,7 @@ class LogticketController extends BaseController{
             $search_range_num = strpos($search_date, '***');
             $search_date_end = substr($search_date, - (strlen($search_date) - $search_range_num - 3));
             $search_date_from = substr($search_date, 0, $search_range_num );
-
+            
             $search_date_from = Yii::$app->formatter->asTime( $search_date_from, 'php:Y-m-d h:i:s');
             $search_date_end = Yii::$app->formatter->asTime( $search_date_end, 'php:Y-m-d h:i:s');
 

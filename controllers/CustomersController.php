@@ -9,10 +9,14 @@ use app\models\Uz;
 use app\models\Cert;
 use app\models\Region;
 use app\models\Customers;
+use app\models\Contact;
+use app\models\Scheme;
+use app\models\Address;
 use app\models\CustomersForm;
 use phpDocumentor\Reflection\Types\Array_;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
+use yii\helpers\FileHelper;
 use Yii;
 class CustomersController extends BaseController{
 
@@ -131,8 +135,8 @@ class CustomersController extends BaseController{
             };
         }
 
-        $query = Customers::find()->with('contacts')->with('uzs')->with('doctype')->with('address')->where(['id'=>$id])->all();
-        $customer = $query[0];
+        $customer = Customers::find()->with('contacts')->with('uzs')->with('doctype')->with('address')->where(['id'=>$id])->one();
+        
         $model = new CustomersForm();
     // Изменение описания и тип обмена документооборота
         if ($model->load(Yii::$app->request->post())) {
@@ -145,8 +149,7 @@ class CustomersController extends BaseController{
             }
         }
 
-        $query = Customers::find()->with('contacts')->with('uzs')->with('doctype')->with('address')->where(['id'=>$id])->all();
-        $customer = $query[0];
+        $customer = Customers::find()->with('contacts')->with('uzs')->with('doctype')->with('address')->where(['id'=>$id])->one();
 
         $text = preg_replace( "#\r?\n#", "<br />", $customer->description );
         $customer->description = $text;
@@ -390,21 +393,120 @@ class CustomersController extends BaseController{
         ]);
 
     }
-    public function actionAssociation()
+    public function actionAssociation($id)
     {
+        $pickup = Yii::$app->request->get('pickup');
+        if($pickup != NULL){
 
-        $search = Yii::$app->request->get('search');
+            $parent = Customers::findOne($id);
+            $child = Customers::findOne($pickup);
 
-        $search1 = str_replace(' ','', $search);
+            $certs = $child->cert;
+            foreach ($certs as $cert){
 
-        $query = Customers::find()->where(['like', 'replace(fullname, " ", "")', $search1]);
+                $child_cert = Cert::findOne($cert->id);
+                $child_cert->parent_customer = $id;
+                $child_cert->save();
 
-        $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 15]);
-        $customers = $query->offset($pages->offset)->limit($pages->limit)->all();
-        return $this->render('index', [
+                $new_cert = new Cert();
+                $new_cert->num = $cert->num;
+                $new_cert->st_date = $cert->st_date;
+                $new_cert->ex_date = $cert->ex_date;
+                $new_cert->sc_link = $cert->sc_link;
+                $new_cert->customer_id = $id;
+                $new_cert->cert_group_name_id = $cert->cert_group_name_id;
+                $new_cert->save();
+
+
+                $file = fopen(Yii::$app->basePath . '/web/scans/' . $cert->customer_id . '/' . $cert->sc_link, 'rb'); 
+
+
+                $path = Yii::$app->params['pathUploads'] . 'scans/' . $id . '/';
+                FileHelper::createDirectory($path);
+                $newfile = fopen($path . '/' . $new_cert->sc_link, 'wb');
+                while(($line = fgets($file)) !== false) {
+                    fputs($newfile, $line);
+                }
+                fclose($newfile);
+                fclose($file); 
+                return $file;
+            }
+            $addresses = $child->address;
+            foreach ($addresses as $address){
+
+                $new_address = new Address();
+                $new_address->region_id = $address->region_id;
+                $new_address->district = $address->district;
+                $new_address->city = $address->city;
+                $new_address->street = $address->street;
+                $new_address->num = $address->supply_ex_time;
+                $new_address->branch = $address->branch;
+                $new_address->customer_id = $id;
+                $new_address->child_customer = $pickup;
+                $new_address->save();
+            }
+            $contacts = $child->contacts;
+            foreach ($contacts as $contact){
+
+                $new_contact = new Contact();
+                $new_contact->name = $contact->name;
+                $new_contact->position = $contact->position;
+                $new_contact->w_tel = $contact->w_tel;
+                $new_contact->m_tel = $contact->m_tel;
+                $new_contact->mail = $contact->mail;
+                $new_contact->ityn = $contact->ityn;
+                $new_contact->description = $contact->description;
+                $new_contact->customer_id = $id;
+                $new_contact->child_customer = $pickup;
+                $new_contact->department = $contact->department;
+                $new_address->save();
+            }
+            $schemes = $child->scheme;
+            foreach ($schemes as $scheme){
+
+                $new_scheme = new Scheme();
+                $new_scheme->sc_link = $scheme->sc_link;
+                $new_scheme->description = $scheme->description;
+                $new_scheme->customer_id = $id;
+                $new_scheme->child_customer = $pickup;
+                $new_scheme->save();
+            }
+
+            $uzs = $child->uzs;
+            foreach ($uzs as $uz){
+
+                $new_uz = new Uz();
+                $new_uz->type_id = $uz->type_id;
+                $new_uz->net_id = $uz->net_id;
+                $new_uz->supply_time = $uz->supply_time;
+                $new_uz->description = $id;
+                $new_uz->supply_ex_time = $uz->supply_ex_time;
+                $new_uz->child_customer = $uz->child_customer;
+
+
+
+                $new_uz->support_a = $cert->ex_date;
+                $new_uz->address_id = $cert->ex_date;
+
+
+                $new_uz->save();
+            }
+
+            return $this->redirect(array('customers/view', 'id'=>$id));
+        }
+
+        $query = Customers::find()->all();
+        $customers = Array();
+        foreach ($query as $value)
+        {
+            if ($value->parent_id == NULL and $value->id != $id){
+                array_push($customers, $value->id . ' - ' . $value->fullname);
+            }
+        }
+
+        return $this->render('association', [
             'customers' => $customers,
-            'pages' => $pages,
-            'searchshort' => $search1
+            'id' => $id,
         ]);
 
     }

@@ -69,15 +69,26 @@ function find_uzs($certuzs, $fullname)
             document.getElementById('search_text').value += '***' + document.getElementById('date_from').value + '***' + document.getElementById('date_end').value ;
         }
     }
-    function log_choose_date(e) {
+    function log_choose_date() {
         
         if (document.getElementById('search_option').value == 'По дате'){
             $(".date").show();
+            $(".search_text").hide();
+            $(".search_button").show();
         }
         else{
             $(".date").hide();
-
+            $(".search_text").show();
+            $(".search_button").hide();
         }
+
+    }
+
+    function search_button(){
+        var form = document.getElementById('search_form');
+        console.log(document.getElementById('search_form'));
+        search_option();
+        form.submit();
     }
 
 </script>
@@ -94,14 +105,15 @@ function find_uzs($certuzs, $fullname)
                     </h4>      
                 <?php else:?>
                 <section class="box search">
-                    <form method="get" onsubmit="search_option()"  action="<?= Url::to(['cert/searchfull']) ?>">
-                        <input  id="search_text" type="text" class="text" name="search"  placeholder="Поиск" />
+                    <form method="get" onsubmit="search_option()" id="search_form" action="<?= Url::to(['cert/searchfull']) ?>">
+                        <input  id="search_text" type="text" class="search_text" name="search"  placeholder="Поиск" />
                         <?php  if ($searchfull != NULL):?>
                             <label type="text" class="text"><?php echo $searchfull;?></label>
                             <?= Html::a('<span class="glyphicon glyphicon-remove" style="color:black"></span>', ['cert/show','search'=> ''], ['class'=>'btn btn-xs', 'name' => 'cert-search-button', 'title' => 'Отмена']) ?>
 
                         <?php endif;?>
                     </form>
+                    <button id="search_button"  onclick="search_button()" class="search_button" name="search" value="Поиск"  hidden>Поиск</button>
                 </section>
                 <input class="date" id="date_from" type="date" value="<?php echo  date('Y-m-d h:i', time()); ?>" hidden>
                 <input class="date" id="date_end" type="date" value="<?php echo  date('Y-m-d h:i', time()); ?>" hidden>

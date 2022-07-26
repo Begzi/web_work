@@ -127,10 +127,6 @@ $this->title = 'Изменение узла';
     </div>
 </div>
 
-<?php foreach ($address as $add): ?>
-
-    <?php echo $add ?>
-<?php endforeach;?>
 
 
 <!--            <div class="form-group">-->

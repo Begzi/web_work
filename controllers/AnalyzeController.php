@@ -5,6 +5,9 @@ namespace app\controllers;
 
 
 use app\models\Uz;
+use app\models\UzNet;
+use app\models\UzType;
+use app\models\UzTypeCategoria;
 use app\models\Cert;
 use app\models\Customers;
 use app\models\Contact;
@@ -49,6 +52,11 @@ class AnalyzeController extends BaseController{
         $query = Customers::find();
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 15]);
         $customers = $query->offset($pages->offset)->limit($pages->limit)->all();
-        return $this->render('index', compact('customers', 'pages'));
+        $typecategoria = UzTypeCategoria::find()->all();
+        $type = UzType::find()->all();
+        $net = UzNet::find()->all();
+        
+        
+        return $this->render('index', compact('customers', 'pages', 'typecategoria', 'type', 'net'));
     }
 }

@@ -107,22 +107,40 @@ use yii\bootstrap\ActiveForm;
                                         <?php for ($i=0; $i < count($customer->contacts); $i++):?>       
                                 
                                             <tr>
-                                                <td>
+                                                <td style="width: 10%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                     <?php echo $customer->contacts[$i]->position?>
                                                 </td>
-                                                <td>
+                                                <td style="width: 25%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                    <?php echo $customer->contacts[$i]->name ?>
                                                 </td>
-                                                <td>
+                                                <td style="width: 15%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                     <?php echo $customer->contacts[$i]->w_tel?>
                                                 </td>
-                                                <td>
+                                                <td style="width: 15%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                     <?php echo $customer->contacts[$i]->m_tel?>
                                                 </td>
-                                                <td>
+                                                <td style="width: 15%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                     <?php echo $customer->contacts[$i]->mail?>
                                                 </td>
-                                                <td>
+                                                <td style="width: 15%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                     <?php if (strlen(strval($customer->contacts[$i]->description)) < 30){
                                                         echo $customer->contacts[$i]->description;
                                                     }
@@ -130,7 +148,10 @@ use yii\bootstrap\ActiveForm;
                                                         echo 'Примечание больше 30 символов';
                                                     }?>
                                                 </td>
-                                                <td>
+                                                <td style="width: 5%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                     <div class="contact_edit_buttons pull-right">
                                                         <?= Html::a('<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>', ['/contact/edit', 'id' => $customer->contacts[$i]->id], ['class'=>'btn btn-xs', 'title' => "Редактировать"]) ?>
                                                     </div>
@@ -223,6 +244,7 @@ use yii\bootstrap\ActiveForm;
                                                 <th>Улица</th>
                                                 <th>Номер</th>
                                                 <th>Номер филиала</th>
+                                                <th>Примечание</th>
                                                 <th><span class="pull-right">Редактирование</span></th>
                                             </tr>
                                         </thead>
@@ -230,25 +252,52 @@ use yii\bootstrap\ActiveForm;
                                         <?php for ($i=0; $i < count($customer->address); $i++):?>       
                                 
                                             <tr>
-                                                <td>
+                                                <td style="width: 20%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                     <?php echo $customer->address[$i]->region->name?>
                                                 </td>
-                                                <td>
+                                                <td style="width: 15%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                    <?php echo $customer->address[$i]->district ?>
                                                 </td>
-                                                <td>
+                                                <td style="width: 20%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                     <?php echo $customer->address[$i]->city?>
                                                 </td>
-                                                <td>
+                                                <td style="width: 5%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                     <?php echo $customer->address[$i]->street?>
                                                 </td>
-                                                <td>
+                                                <td style="width: 5%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                     <?php echo $customer->address[$i]->num?>
                                                 </td>
-                                                <td>                                                    
+                                                <td style="width: 10%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">                                               
                                                     <?php echo $customer->address[$i]->branch?>
                                                 </td>
-                                                <td>
+                                                <td style="width: 20%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">                                                
+                                                    
+                                                </td>
+                                                <td style="width: 5%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
                                                     <div class="contact_edit_buttons pull-right">
                                                         <?= Html::a('<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>', ['/address/edit', 'id' => $customer->address[$i]->id], ['class'=>'btn btn-xs', 'title' => "Редактировать"]) ?>
                                                     </div>
@@ -314,8 +363,8 @@ use yii\bootstrap\ActiveForm;
                                                 <th>ID</th>
                                                 <th>Наименование</th>
                                                 <th>№ сети</th>
-                                                <th>Примечание</th>
                                                 <th>Филиал</th>
+                                                <th>Примечание</th>
                                                 <th>Дата ввода в эксплуатацию</th>
                                                 <th>Техподдержка</th>
                                             </tr>
@@ -344,6 +393,14 @@ use yii\bootstrap\ActiveForm;
                                                         white-space: nowrap;">
                                                     <?php echo $realuzs[$k][$i]->uznet->num . ' ' . $realuzs[$k][$i]->uznet->name?>
                                                 </td>
+                                                <td style="width: 10%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;">
+                                                    <?php if ($realuzs[$k][$i]->address != NULL){
+                                                        echo $realuzs[$k][$i]->address->branch;
+                                                    }
+                                                    ?>
                                                 <td style="width: 11%;
                                                         overflow: hidden;
                                                         text-overflow: ellipsis;
@@ -355,14 +412,6 @@ use yii\bootstrap\ActiveForm;
                                                         echo 'Примечание больше 10 символов';
                                                     }?>
                                                 </td>
-                                                <td style="width: 10%;
-                                                        overflow: hidden;
-                                                        text-overflow: ellipsis;
-                                                        white-space: nowrap;">
-                                                    <?php if ($realuzs[$k][$i]->address != NULL){
-                                                        echo $realuzs[$k][$i]->address->branch;
-                                                    }
-                                                    ?>
                                                 </td>
                                     <?php if ($realuzs[$k][$i]->supply_time == NULL or $realuzs[$k][$i]->supply_time == '1970-01-01'):?>
                                                     <td style="width: 15%;

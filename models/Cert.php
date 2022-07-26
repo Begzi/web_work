@@ -31,10 +31,6 @@ class Cert extends ActiveRecord
     {
         return $this->hasOne(CertGroupName::class, ['id' => 'cert_group_name_id']);
     }
-    public function getCertgroup()
-    {
-        return $this->hasMany(CertGroup::class, ['cert_id' => 'id']);
-    }
 
 
 }
