@@ -42,7 +42,7 @@ $this->title = 'Изменение заказчиков';
 
                 <?= $form->field($model, 'shortname')->textInput(['autofocus' => true, 'value'=>$customer->shortname])->label('Короткое имя учреждения')?>
 
-                <?= $form->field($model, 'address')->textInput(['autofocus' => true, 'value'=>$customer->address])->label('Юридический адресс')  ?>
+                <?= $form->field($model, 'leg_address')->textInput(['autofocus' => true, 'value'=>$customer->leg_address])->label('Юридический адресс')  ?>
 
                 <?= $form->field($model, 'description')->textInput([ 'value'=>$customer->description])->label('Примечание') ?>
 

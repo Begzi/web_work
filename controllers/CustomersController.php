@@ -429,7 +429,6 @@ class CustomersController extends BaseController{
                 }
                 fclose($newfile);
                 fclose($file); 
-                return $file;
             }
             $addresses = $child->address;
             foreach ($addresses as $address){
@@ -439,7 +438,7 @@ class CustomersController extends BaseController{
                 $new_address->district = $address->district;
                 $new_address->city = $address->city;
                 $new_address->street = $address->street;
-                $new_address->num = $address->supply_ex_time;
+                $new_address->num = $address->num;
                 $new_address->branch = $address->branch;
                 $new_address->customer_id = $id;
                 $new_address->child_customer = $pickup;
@@ -459,7 +458,7 @@ class CustomersController extends BaseController{
                 $new_contact->customer_id = $id;
                 $new_contact->child_customer = $pickup;
                 $new_contact->department = $contact->department;
-                $new_address->save();
+                $new_contact->save();
             }
             $schemes = $child->scheme;
             foreach ($schemes as $scheme){
@@ -479,15 +478,44 @@ class CustomersController extends BaseController{
                 $new_uz->type_id = $uz->type_id;
                 $new_uz->net_id = $uz->net_id;
                 $new_uz->supply_time = $uz->supply_time;
-                $new_uz->description = $id;
                 $new_uz->supply_ex_time = $uz->supply_ex_time;
-                $new_uz->child_customer = $uz->child_customer;
+                $new_uz->description = $uz->description;
+                $new_uz->customer_id = $id;
+                $new_uz->child_customer = $pickup;
 
 
 
-                $new_uz->support_a = $cert->ex_date;
-                $new_uz->address_id = $cert->ex_date;
+                $child_cert = $uz->actualcert;
+                if ($child_cert != NULL){
+                    $query = Cert::find()->andWhere(['num'=>$child_cert->num])->all();
+                    $parent_cert = $child_cert;
+                    foreach ($query as $cert){
+                        if ($parent_cert->id < $cert->id){
+                            $parent_cert = $cert;
+                        }
+                    }
+                    $new_uz->support_a = $parent_cert->id;
+                }
 
+                $child_address = $uz->address;
+                if ($child_address != NULL){
+                    $query = Address::find()->andWhere(['region_id' =>$child_address->region_id])
+                        ->andWhere(['region_id' =>$child_address->region_id])
+                        ->andWhere(['district' =>$child_address->district])
+                        ->andWhere(['city' =>$child_address->city])
+                        ->andWhere(['street' =>$child_address->street])
+                        ->andWhere(['num' =>$child_address->num])
+                        ->andWhere(['branch' =>$child_address->branch])
+                        ->all();
+
+                    $parent_address = $child_address;
+                    foreach ($query as $address){
+                        if ($parent_address->id < $address->id){
+                            $parent_address = $address;
+                        }
+                    }
+                    $new_uz->address_id = $parent_address->id;
+                }
 
                 $new_uz->save();
             }

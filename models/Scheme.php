@@ -18,4 +18,8 @@ class Scheme extends ActiveRecord
     }
 
 
+    public function getChildCustomer()
+    {
+        return $this->hasOne(Customers::class, ['id' => 'child_customer']);
+    }
 }

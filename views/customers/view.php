@@ -141,12 +141,25 @@ use yii\bootstrap\ActiveForm;
                                                         overflow: hidden;
                                                         text-overflow: ellipsis;
                                                         white-space: nowrap;">
-                                                    <?php if (strlen(strval($customer->contacts[$i]->description)) < 30){
-                                                        echo $customer->contacts[$i]->description;
+                                                    <?php if ($customer->contacts[$i]->child_customer == NULL){
+
+                                                        if (strlen(strval($customer->contacts[$i]->description)) < 30){
+                                                            echo $customer->contacts[$i]->description;
+                                                        }
+                                                        else{
+                                                            echo 'Примечание больше 30 символов';
+                                                        }
                                                     }
                                                     else{
-                                                        echo 'Примечание больше 30 символов';
+                                                        $child_customer_shortname = $customer->contacts[$i]->childCustomer->shortname;
+                                                        if (strlen($child_customer_shortname) > 30){
+                                                            echo mb_strimwidth($child_customer_shortname, 0, 30);
+                                                        }
+                                                        else{
+                                                            echo $child_customer_shortname;
+                                                        }
                                                     }?>
+
                                                 </td>
                                                 <td style="width: 5%;
                                                         overflow: hidden;
@@ -291,7 +304,19 @@ use yii\bootstrap\ActiveForm;
                                                 <td style="width: 20%;
                                                         overflow: hidden;
                                                         text-overflow: ellipsis;
-                                                        white-space: nowrap;">                                                
+                                                        white-space: nowrap;">  
+                                                <?php if ($customer->address[$i]->child_customer == NULL){
+
+                                                }
+                                                else{
+                                                    $child_customer_shortname = $customer->address[$i]->childCustomer->shortname;
+                                                    if (strlen($child_customer_shortname) > 30){
+                                                        echo mb_strimwidth($child_customer_shortname, 0, 30);
+                                                    }
+                                                    else{
+                                                        echo $child_customer_shortname;
+                                                    }
+                                                }?>                                              
                                                     
                                                 </td>
                                                 <td style="width: 5%;
@@ -401,25 +426,38 @@ use yii\bootstrap\ActiveForm;
                                                         echo $realuzs[$k][$i]->address->branch;
                                                     }
                                                     ?>
+                                                </td>
                                                 <td style="width: 11%;
                                                         overflow: hidden;
                                                         text-overflow: ellipsis;
                                                         white-space: nowrap;">
-                                                    <?php if (strlen(strval($realuzs[$k][$i]->description)) < 10){
-                                                        echo $realuzs[$k][$i]->description;
+
+                                                    <?php if ($realuzs[$k][$i]->child_customer == NULL){
+                                                        if (strlen(strval($realuzs[$k][$i]->description)) < 10){
+                                                            echo $realuzs[$k][$i]->description;
+                                                        }
+                                                        else{
+                                                            echo 'Примечание больше 10 символов';
+                                                        }
                                                     }
                                                     else{
-                                                        echo 'Примечание больше 10 символов';
-                                                    }?>
+                                                        $child_customer_shortname = $realuzs[$k][$i]->childCustomer->shortname;
+                                                        if (strlen($child_customer_shortname) > 10){
+                                                            echo mb_strimwidth($child_customer_shortname, 0, 10);
+                                                        }
+                                                        else{
+                                                            echo $child_customer_shortname;
+                                                        }
+                                                    }?>     
+                                                    
                                                 </td>
-                                                </td>
-                                    <?php if ($realuzs[$k][$i]->supply_time == NULL or $realuzs[$k][$i]->supply_time == '1970-01-01'):?>
+                                        <?php if ($realuzs[$k][$i]->supply_time == NULL or $realuzs[$k][$i]->supply_time == '1970-01-01'):?>
                                                     <td style="width: 15%;
                                                         overflow: hidden;
                                                         text-overflow: ellipsis;
                                                         white-space: nowrap;">
                                                     </td>
-                                    <?php else:?>
+                                        <?php else:?>
 
                                             <?php $base = date('Y-m-d', strtotime(''.$realuzs[$k][$i]->supply_ex_time));?>
                                             <?php if ($realuzs[$k][$i]->uztype->type == 1):?>

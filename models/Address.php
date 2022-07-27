@@ -25,4 +25,8 @@ class Address extends ActiveRecord
     {
         return $this->hasOne(Region::class, ['id' => 'region_id']);
     }
+    public function getChildCustomer()
+    {
+        return $this->hasOne(Customers::class, ['id' => 'child_customer']);
+    }
 }

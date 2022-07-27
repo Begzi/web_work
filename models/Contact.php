@@ -26,6 +26,10 @@ class Contact extends ActiveRecord
         return $this->hasOne(LogTicket::class, ['contact_id' => 'id']);
     }
 
+    public function getChildCustomer()
+    {
+        return $this->hasOne(Customers::class, ['id' => 'child_customer']);
+    }
 
 //embed.src = 'scans/'+customer_id+'/'+uz_id+'/'+sc_link+'.'+scanfile_format+'';
 //скан доставался в прошлом сайте
