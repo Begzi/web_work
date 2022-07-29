@@ -260,9 +260,12 @@ class ExpireController extends BaseController
             {
                 if (($cert[$j]->ex_date < date('Y-m-d', time())) and ($cert[$j]->mail->state < 7))
                 {
-                    $mail = Mail::find()->where(['cert_id' => $cert[$j]->id])->one();  
-                    $mail->state = $mail->state + 7;
-                    $mail->save();    
+                    $mail = Mail::find()->where(['cert_id' => $cert[$j]->id])->one(); 
+                    if ($mail != NULL) {
+                        $mail->state = $mail->state + 7;
+                        $mail->save(); 
+
+                    }    
                 }                
             }
         }

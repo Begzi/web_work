@@ -17,6 +17,7 @@ class CustomersForm extends Model
     public $description;
     public $com_id;
     public $doc_type_id;
+    public $customer_group_name_id;
     public $CPP;
 
 
@@ -27,7 +28,7 @@ class CustomersForm extends Model
     {
         return [
             // name, email, subject and body are required. 
-            [[ 'UHH',  'CPP', 'doc_type_id', 'fullname', 'shortname', 'leg_address'], 'required'],
+            [[ 'UHH',  'CPP', 'doc_type_id', 'fullname', 'shortname', 'leg_address', 'customer_group_name_id'], 'required'],
             [['fullname', 'shortname', 'leg_address'], 'string', 'max' => 250],
             ['description', 'string', 'max' => 500],
             [['UHH'], 'integer', 'max' => 9999999999, 'message' => 'Введите не больше 10 чисел'],

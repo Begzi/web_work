@@ -13,8 +13,27 @@ class LogTicket extends ActiveRecord
         return 'log_ticket_list';
     }
     public function getCustomer()
+    {        
+        return $this->hasOne(Customers::class, ['id' => 'customer_id']);
+    }
+    public function getCustomerChild()
+    {
+        return $this->hasOne(Customers::class, ['id' => 'child_customer']);
+    }
+    public function getFather()
     {
         return $this->hasOne(Customers::class, ['id' => 'customer_id']);
+    }
+    public function getCustomerParent()
+    {
+        $parent = $this->getFather();
+        $child = $this->getCustomerChild();
+        $tmp = [];
+        array_push($tmp, $parent);
+        if ($child != NULL){
+            array_push($tmp, $child);
+        }
+        return $parent;
     }
     public function getUz()
     {

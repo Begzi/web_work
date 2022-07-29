@@ -6,12 +6,16 @@ namespace app\controllers;
 
 // use app\models\User;
 use app\models\Uz;
+use app\models\Mail;
 use app\models\Cert;
+use app\models\CertUz;
 use app\models\Region;
 use app\models\Customers;
+use app\models\CustomerGroupName;
 use app\models\Contact;
 use app\models\Scheme;
 use app\models\Address;
+use app\models\LogTicket;
 use app\models\CustomersForm;
 use phpDocumentor\Reflection\Types\Array_;
 use yii\data\Pagination;
@@ -304,14 +308,21 @@ class CustomersController extends BaseController{
             $customer->UHH = $model->UHH;
             $customer->CPP = $model->CPP;
             $customer->doc_type_id = $model->doc_type_id;
+            $customer->customer_group_name_id = $model->customer_group_name_id + 1;
             $customer->save();
 
             $query = Customers::find()->where(['fullname' => $model->fullname])->all();
 
             return $this->redirect(array('customers/view', 'id'=>$query[0]->id));
         }
+        $query = CustomerGroupName::find()->all();
+        $customer_group_name = Array();
+        foreach ($query as $group_name){
+            array_push($customer_group_name, $group_name->name);
+        }
         return $this->render('add', [
             'model' => $model,
+            'customer_group_name' => $customer_group_name,
         ]);
 
     }
@@ -362,15 +373,23 @@ class CustomersController extends BaseController{
             $customer->UHH = $model->UHH;
             $customer->CPP = $model->CPP;
             $customer->doc_type_id = $model->doc_type_id;
+            $customer->customer_group_name_id = $model->customer_group_name_id + 1;
             $customer->save();
 
             $query = Customers::find()->where(['fullname' => $model->fullname])->all();
 
+            
             return $this->redirect(array('customers/view', 'id'=>$query[0]->id));
+        }
+        $query = CustomerGroupName::find()->orderBy('id')->all();
+        $customer_group_name = Array();
+        foreach ($query as $group_name){
+            array_push($customer_group_name, $group_name->name);
         }
         return $this->render('edit', [
             'model' => $model,
-            'customer' => $customer
+            'customer' => $customer,
+            'customer_group_name' => $customer_group_name
         ]);
 
     }
@@ -393,6 +412,13 @@ class CustomersController extends BaseController{
         ]);
 
     }
+    public function actionCopeCert(){
+        $customers = Customers::find()->all();
+        foreach ($customers as $customer){
+            $certs = $customer->cert;
+            $uzs = $customer->uzs;
+        }
+    }
     public function actionAssociation($id)
     {
         $pickup = Yii::$app->request->get('pickup');
@@ -400,6 +426,8 @@ class CustomersController extends BaseController{
 
             $parent = Customers::findOne($id);
             $child = Customers::findOne($pickup);
+            $child->parent_id = $id;
+            $child->save();
 
             $certs = $child->cert;
             foreach ($certs as $cert){
@@ -429,6 +457,21 @@ class CustomersController extends BaseController{
                 }
                 fclose($newfile);
                 fclose($file); 
+
+                $temp_ex_date = date('Y-m-d', strtotime(' + 30 days'));
+                $current_date = date('Y-m-d', time());
+                $current_date = date('Y-m-d', strtotime( '' . $current_date. '- 60 days'));
+                if($new_cert->ex_date <= $temp_ex_date and $new_cert->ex_date >= $current_date)
+                {
+
+                    $mail_sended = new Mail;
+                    $mail_sended->cert_id = $new_cert->id;
+                    $mail_sended->st_date_send = Yii::$app->formatter->asTime( time(), 'php:Y-m-d');
+                    $mail_sended->sended = false;
+                    $mail_sended->save();
+                
+
+                }
             }
             $addresses = $child->address;
             foreach ($addresses as $address){
@@ -469,6 +512,12 @@ class CustomersController extends BaseController{
                 $new_scheme->customer_id = $id;
                 $new_scheme->child_customer = $pickup;
                 $new_scheme->save();
+
+
+                $path = Yii::$app->params['pathUploads'] . 'scheme/' . $id . '/';
+                FileHelper::createDirectory($path);
+                copy(Yii::$app->basePath . '/web/scheme/' . $pickup . '/' . $new_scheme->sc_link, $path . '/' . $new_scheme->sc_link);
+              
             }
 
             $uzs = $child->uzs;
@@ -482,6 +531,7 @@ class CustomersController extends BaseController{
                 $new_uz->description = $uz->description;
                 $new_uz->customer_id = $id;
                 $new_uz->child_customer = $pickup;
+                $new_uz->child_uz = $uz->id;
 
 
 
@@ -518,6 +568,72 @@ class CustomersController extends BaseController{
                 }
 
                 $new_uz->save();
+
+
+                $child_certuzs = $uz->certuzs;
+                if ($child_certuzs != NULL){
+                    $query = Certuz::find()->andWhere(['uz_id' =>$uz->id])->all();
+                    foreach ($query as $certuz){
+                        $child_cert = $certuz->cert;
+                        $query_cert = Cert::find()->andWhere(['num'=>$child_cert->num])->all();
+                        $parent_cert_id = NULL;
+                        foreach ($query_cert as $cert){
+                            if ($cert->id > $child_cert->id){
+                                $parent_cert_id = $cert->id;
+                            }
+                        }
+                        $certuz = new CertUz;
+                        $certuz->cert_id = $parent_cert_id;
+                        $certuz->uz_id = $new_uz->id;
+                        $certuz->save();
+                    }
+                }
+            }
+
+
+            $log_tickets = $child->logTicket;
+
+            foreach ($log_tickets as $log_ticket){
+                $new_log_ticket = new LogTicket();
+                $new_log_ticket->status = $log_ticket->status;
+                $new_log_ticket->reg_date = $log_ticket->reg_date;
+                $new_log_ticket->topic = $log_ticket->topic;
+                $new_log_ticket->res_person = $log_ticket->res_person;
+                $new_log_ticket->kbase_link = $log_ticket->kbase_link;
+                $new_log_ticket->priority = $log_ticket->priority;
+                $new_log_ticket->type = $log_ticket->type;
+                $new_log_ticket->description = $log_ticket->description;
+                $new_log_ticket->solution_time= $log_ticket->solution_time;
+                $new_log_ticket->customer_id= $id;
+                $new_log_ticket->child_customer= $pickup;
+
+                $contact = $log_ticket->contact;
+                if ($contact != NULL){
+                    $contacts = Contact::find()->andWhere(['name' =>$contact->name])
+                        ->andWhere(['position' =>$contact->position])
+                        ->andWhere(['w_tel' =>$contact->w_tel])
+                        ->andWhere(['m_tel' =>$contact->m_tel])
+                        ->andWhere(['mail' =>$contact->mail])
+                        ->andWhere(['ityn' =>$contact->ityn])
+                        ->andWhere(['description' =>$contact->description])
+                        ->andWhere(['department' =>$contact->department])
+                        ->all();
+
+                    foreach ($contacts as $c){
+                        if ($contact->id < $c->id){
+                            $contact = $c;
+                        }                        
+                    }
+                    $new_log_ticket->contact_id = $contact->id;
+                }
+
+                $uz = $log_ticket->uz; //Всегд НУЛ!
+                if ($uz != NULL){
+                    $new_log_ticket->uz_id = $uz->parentUz->id;
+                }
+
+                $new_log_ticket->save();
+
             }
 
             return $this->redirect(array('customers/view', 'id'=>$id));
@@ -538,5 +654,86 @@ class CustomersController extends BaseController{
         ]);
 
     }
+
+    public function actionTest(){
+        $customers = Customers::find()->all();
+        $check = Array();
+        foreach ($customers as $customer){
+            $shortname =  $customer->shortname;
+            if (strpos($shortname, 'ЧУ') !== false or strpos($shortname, 'ООО') !== false or 
+                strpos($shortname, 'ЧУЗ') !== false or strpos($shortname, 'НУЗ') !== false or 
+                strpos($shortname, 'АО') !== false or strpos($shortname, 'Нефросовет-Ярославль')!== false
+                or strpos($shortname, 'Общество с огр')!== false)
+            {
+                $customer->customer_group_name_id = 2;
+            }
+            elseif (strpos($shortname, 'КГАУЗ') !== false or strpos($shortname, 'АНО') !== false
+                    or strpos($shortname, 'КГАОУ') !== false ){
+                $customer->customer_group_name_id = 3;
+
+            }
+            else{
+
+                $customer->customer_group_name_id = 1;
+            }  
+            $customer->save();
+
+
+            
+        }
+        return $this->render('test', [
+            'customers' => $check
+        ]);
+    }
+
+
+    // КГБУЗ - бюджетное
+
+    // КГКУЗ - бюджетное 
+
+    // ФГБУ - бюджетное/федеральное 
+
+    // КГБОУ - бюджетное
+
+    // КГКУ - бюджетное
+
+    // ФГБУЗ - бюджетное/федеральное
+
+    // ТФОМС - бюджетное
+
+    // МЗКК - бюджетное
+
+    // КГБПОУ - бюджетное
+
+    // Агенство государственного заказа Красноярского края - бюджетное
+
+    // ГУ МВД - бюджетное
+
+    // Администрация города Дивногорск - бюджетное
+
+    // Администрация Пировского района - бюджетное
+
+    // ГБУЗ - бюджетное
+
+    // Территориальный орган Росздравнадзора по Красноярскому краю - бюджетное
+
+    // МУ - бюджетное
+
+    // КГАУЗ - автономное
+
+    // АНО - автономное
+
+    // ООО - коммерческое
+
+    // НУЗ - коммерческое
+
+    // ЧУЗ - коммерческое
+
+    // АО - коммерческое
+
+    // Нефросовет-Ярославль - коммерческое
+
+    // ЧУ - коммерческое?
+
 
 }

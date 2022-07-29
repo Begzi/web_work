@@ -49,4 +49,12 @@ class Uz extends ActiveRecord
     {
         return $this->hasOne(Customers::class, ['id' => 'child_customer']);
     }
+    public function getChildUz()
+    {
+        return $this->hasOne(Uz::class, ['id' => 'child_uz']);
+    }
+    public function getParentUz()
+    {
+        return $this->hasOne(Uz::class, ['child_uz' => 'id']);
+    }
 }

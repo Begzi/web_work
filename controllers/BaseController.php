@@ -106,7 +106,7 @@ class BaseController extends Controller
 
 
           
-        Yii::$app->cache->set('certMenu1', $certs, 86400);
+        Yii::$app->cache->set('certMenu1', $certs, 8);
         return $certs;
     }
 

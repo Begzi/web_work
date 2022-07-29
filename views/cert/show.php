@@ -86,7 +86,6 @@ function find_uzs($certuzs, $fullname)
 
     function search_button(){
         var form = document.getElementById('search_form');
-        console.log(document.getElementById('search_form'));
         search_option();
         form.submit();
     }
@@ -115,8 +114,8 @@ function find_uzs($certuzs, $fullname)
                     </form>
                     <button id="search_button"  onclick="search_button()" class="search_button" name="search" value="Поиск"  hidden>Поиск</button>
                 </section>
-                <input class="date" id="date_from" type="date" value="<?php echo  date('Y-m-d h:i', time()); ?>" hidden>
-                <input class="date" id="date_end" type="date" value="<?php echo  date('Y-m-d h:i', time()); ?>" hidden>
+                <input class="date" id="date_from" type="date" value="<?php echo  date('Y-m-d', time()); ?>" hidden>
+                <input class="date" id="date_end" type="date" value="<?php echo  date('Y-m-d', time()); ?>" hidden>
                 <?php endif;?>
             </div>
 

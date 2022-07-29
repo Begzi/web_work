@@ -45,7 +45,7 @@ $config = [
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'server51.hosting.reg.ru',  // e.g. smtp.mandrillapp.com or smtp.gmail.com
                 'username' => 'support@pik-b.ru',
-                'password' => '1804nt[gjl!',
+                'password' => 'sup2209port!',
                 'port' => '465', // Port 25 is a very common port too
                 'encryption' => 'ssl', // It is often used, check your provider or mail server specs
             ],

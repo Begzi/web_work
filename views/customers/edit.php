@@ -55,7 +55,13 @@ $this->title = 'Изменение заказчиков';
                         '1' => 'Электронный',
                         '2' => 'Бумажный',
                     ],
-                        ['options'=>[$customer['doc_type_id']=>['Selected'=>true]]])->label('Тип документооборота');?>
+                        ['options'=>[$customer['doc_type_id']  =>['Selected'=>true]]])->label('Тип документооборота');?>
+
+
+                 <?= $form->field($model, 'customer_group_name_id')
+                ->dropDownList([$customer_group_name], ['options'=>[$customer['customer_group_name_id'] - 1 =>['Selected'=>true]]])
+                ->label('Группа<font color="f33810">*</font>');?>
+
                 <div class="form-group">
                     <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary', 'name' => 'customers-add-button']) ?>
                     <?= Html::a('Отмена изменений', ['/customers/view', 'id' => $customer->id], ['class'=>'btn btn-primary']) ?>

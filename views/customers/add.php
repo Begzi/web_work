@@ -63,6 +63,10 @@ $this->title = 'Новый заказчик';
                 'prompt' => 'Выберите один вариант'
                 ])->label('Тип документооборота<font color="f33810">*</font>');?>
 
+                 <?= $form->field($model, 'customer_group_name_id')
+                ->dropDownList([$customer_group_name])
+                ->label('Группа<font color="f33810">*</font>');?>
+
                 <?= $form->field($model, 'description')->textarea()->label('Примечание') ?>
                 <div class="form-group">
                     <?= Html::submitButton('Добавить', ['class' => 'btn btn-primary', 'name' => 'customers-add-button']) ?>

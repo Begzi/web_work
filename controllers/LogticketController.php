@@ -46,6 +46,7 @@ class LogticketController extends BaseController{
         $query = LogTicket::find()->orderBy('status, id DESC');
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 30]);
         $logticket = $query->offset($pages->offset)->limit($pages->limit)->all();
+        // return ($logticket[0]->customerParent->shortname);
         return $this->render('index', compact('logticket', 'pages'));
     }
 

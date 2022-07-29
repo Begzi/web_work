@@ -45,7 +45,7 @@ use yii\bootstrap\ActiveForm;
         <?= Html::a('Изменить данные заказчика', ['/customers/edit', 'id' => $customer->id], ['class'=>'btn btn-primary pull-right']) ?>
     <?php endif;?>
     <?php if (Yii::$app->user->can('logList', Yii::$app->user->id)):?>
-                <?= Html::a('Журнал обращений', ['/logticket/searchfull', 'search' => $customer->shortname], ['class'=>'btn btn-primary']) ?>
+                <?= Html::a('Журнал обращений', ['/logticket/searchfull', 'search' => $customer->shortname.'***'.'Заказчик'], ['class'=>'btn btn-primary']) ?>
                 <?= Html::a('Создать обращение', ['/logticket/add', 'customer_id' => $customer->id], ['class'=>'btn btn-primary']) ?>
                 <?= Html::a('Схема сети учреждения', ['/scheme/show', 'customer_id' => $customer->id], ['class'=>'btn btn-primary']) ?>
     <?php endif;?>

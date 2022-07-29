@@ -54,8 +54,8 @@ $this->title = 'Тикет';
                     </form>
                     <button id="search_button"  onclick="search_button()" class="search_button" name="search" value="Поиск"  hidden>Поиск</button>
                 </section>
-                <input class="date" id="date_from" type="date" value="<?php echo  date('Y-m-d h:i', time()); ?>" hidden>
-                <input class="date" id="date_end" type="date" value="<?php echo  date('Y-m-d h:i', time()); ?>" hidden>
+                <input class="date" id="date_from" type="date" value="<?php echo  date('Y-m-d', time()); ?>" hidden>
+                <input class="date" id="date_end" type="date" value="<?php echo  date('Y-m-d', time()); ?>" hidden>
             </div>
 
         <div class="col-xs-12 col-md-4">
@@ -167,8 +167,18 @@ $this->title = 'Тикет';
 													<td style="max-width: 100px;
 														overflow: hidden;
 														text-overflow: ellipsis;
-														white-space: nowrap;"><a href="<?= \yii\helpers\Url::to(['/customers/view','id' => $logticket[$i]->customer->id])?>" >
-															<?php echo $logticket[$i]->customer->shortname; ?></a></td>
+														white-space: nowrap;">
+															<?php if ($logticket[$i]->child_customer == NULL):?>
+																<a href="<?= \yii\helpers\Url::to(['/customers/view','id' => $logticket[$i]->customer->id])?>" >
+																	<?php echo $logticket[$i]->customer->shortname; ?>
+																</a>
+															<?php else:?>
+																<a href="<?= \yii\helpers\Url::to(['/customers/view','id' => $logticket[$i]->customerChild->id])?>" >
+																		<?php echo $logticket[$i]->customerChild->shortname; ?>
+																	</a>
+															<?php endif?>
+
+													</td>
 													<td style="width: 140px;
 														overflow: hidden;
 														text-overflow: ellipsis;
