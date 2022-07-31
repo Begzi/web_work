@@ -1,4 +1,4 @@
-php 7.3.26, Composer 2.0.14
+php 7.3.26, Composer 2.0.14. Есть пользователь TZI1 Z123456z
 ![image](https://user-images.githubusercontent.com/49578823/182028353-64561757-459b-4304-a42b-4d347e8e3e0a.png)
 
 CRM сайт для компании в котором я работал. ТЗ от компании в файле "ТЗ для сайта".
